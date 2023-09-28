@@ -11,6 +11,7 @@ import (
 )
 
 func NewTestClient() *Client {
+	return NewClient("", "", "")
 }
 
 func TestAuth(t *testing.T) {
@@ -28,14 +29,17 @@ func TestAuth(t *testing.T) {
 func TestError(t *testing.T) {
 	ctx := context.Background()
 	t.Run("Auth", func(t *testing.T) {
-		c := New("https://api-m.sandbox.paypal.com", "1234", "5678")
+		c := NewClient("https://api-m.sandbox.paypal.com", "1234", "5678")
 		ptesting.R(c.Auth(ctx)).EqualError(t, "invalid_client: Client Authentication failed")
 	})
 
 	t.Run("CreateOrder", func(t *testing.T) {
 		c := NewTestClient()
 		var e *Error
-		ptesting.R(c.CreateOrder(ctx, &CreateOrderReq{Intent: OICapture})).ErrorAs(t, &e)
+		order := &Order{
+			Intent: OICapture,
+		}
+		ptesting.R(c.CreateOrder(ctx, &CreateOrderReq{Order: order})).ErrorAs(t, &e)
 		assert.NotZero(t, e.DebugID)
 		e.DebugID = ""
 		assert.Equal(t, &Error{

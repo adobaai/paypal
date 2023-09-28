@@ -18,7 +18,7 @@ type Client struct {
 	hc *http.Client
 }
 
-func New(base, id, secret string) *Client {
+func NewClient(base, id, secret string) *Client {
 	return &Client{
 		base:   base,
 		id:     id,
