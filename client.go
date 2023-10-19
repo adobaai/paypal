@@ -76,16 +76,48 @@ func (c *Client) checkToken(ctx context.Context) (err error) {
 // and automatically refreshes the client's access token.
 func JSON[R any](ctx context.Context, c *Client, method, path string, data any,
 ) (res *R, err error) {
-	if err = c.checkToken(ctx); err != nil {
-		return
-	}
 	url := c.base + path
 	req, err := NewJSONRequest(ctx, method, url, data)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}
+	if err = c.checkToken(ctx); err != nil {
+		return
+	}
 	req.Header.Set("Authorization", "Bearer "+c.t.AccessToken)
 	return doJSON[R](ctx, c, req)
+}
+
+// JSONNop is similar to [JSON] but with the response body discarded.
+func JSONNop(ctx context.Context, c *Client, method, path string, data any) (err error) {
+	url := c.base + path
+	req, err := NewJSONRequest(ctx, method, url, data)
+	if err != nil {
+		return fmt.Errorf("new request: %w", err)
+	}
+	if err = c.checkToken(ctx); err != nil {
+		return
+	}
+	req.Header.Set("Authorization", "Bearer "+c.t.AccessToken)
+	hres, err := c.hc.Do(req)
+	if err != nil {
+		return fmt.Errorf("do: %w", err)
+	}
+	defer hres.Body.Close()
+	if hres.StatusCode < 400 {
+		return nil
+	}
+	if hres.ContentLength == 0 {
+		return &Error{
+			StatusCode: hres.StatusCode,
+		}
+	}
+	e, err := RespJSON[Error](hres)
+	if err != nil {
+		return fmt.Errorf("unmarshal error: %w", err)
+	}
+	e.StatusCode = hres.StatusCode
+	return e
 }
 
 func doJSON[R any](ctx context.Context, c *Client, req *http.Request) (res *R, err error) {
