@@ -55,6 +55,7 @@ type WebhookVerification struct {
 // See https://developer.paypal.com/docs/api/webhooks/v1/#verify-webhook-signature_post
 func (c *Client) VerifyWebhookSign(ctx context.Context, req *VerifyWSReq,
 ) (ok bool, err error) {
+	ctx = WithOperation(ctx, "VerifyWebhookSign")
 	r, err := JSON[WebhookVerification](ctx, c,
 		http.MethodPost, "/v1/notifications/verify-webhook-signature", req)
 	if err != nil {

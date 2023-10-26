@@ -9,6 +9,10 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type Client struct {
@@ -23,8 +27,35 @@ func NewClient(base, id, secret string) *Client {
 		base:   base,
 		id:     id,
 		secret: secret,
-		hc:     &http.Client{},
+		hc: &http.Client{
+			Transport: otelhttp.NewTransport(
+				http.DefaultTransport,
+				otelhttp.WithSpanNameFormatter(formatSpanName),
+				otelhttp.WithSpanOptions(
+					trace.WithAttributes(semconv.PeerServiceKey.String("paypal")),
+				),
+			),
+		},
 	}
+}
+
+func formatSpanName(_ string, r *http.Request) string {
+	op := GetOperation(r.Context())
+	if op == "" {
+		// Fallback to the default name
+		op = r.Method
+	}
+	return "PayPal " + op
+}
+
+type operationKey struct{}
+
+func WithOperation(ctx context.Context, op string) context.Context {
+	return context.WithValue(ctx, operationKey{}, op)
+}
+
+func GetOperation(ctx context.Context) string {
+	return ctx.Value(operationKey{}).(string)
 }
 
 type Token struct {
@@ -47,6 +78,7 @@ func (t *Token) Valid() bool {
 // Auth requests a new token from PayPal server.
 // See https://developer.paypal.com/api/rest/authentication/.
 func (c *Client) Auth(ctx context.Context) (res *Token, err error) {
+	ctx = WithOperation(ctx, "Auth")
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
 		c.base+"/v1/oauth2/token", strings.NewReader("grant_type=client_credentials"))
 	if err != nil {

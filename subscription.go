@@ -41,6 +41,7 @@ type CreateSubscriptionReq struct {
 // See https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_create
 func (c *Client) CreateSubscription(ctx context.Context, req *CreateSubscriptionReq,
 ) (res *Subscription, err error) {
+	ctx = WithOperation(ctx, "CreateSubscription")
 	return JSON[Subscription](ctx, c, http.MethodPost, "/v1/billing/subscriptions", req)
 }
 

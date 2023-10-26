@@ -101,6 +101,7 @@ type CreateOrderReq struct {
 //
 // See https://developer.paypal.com/docs/api/orders/v2/#orders_create.
 func (c *Client) CreateOrder(ctx context.Context, req *CreateOrderReq) (res *Order, err error) {
+	ctx = WithOperation(ctx, "CreateOrder")
 	return JSON[Order](ctx, c, http.MethodPost, "/v2/checkout/orders", req)
 }
 
@@ -113,5 +114,6 @@ type CaptureOrderReq struct {
 //
 // See https://developer.paypal.com/docs/api/orders/v2/#orders_capture.
 func (c *Client) CaptureOrder(ctx context.Context, req *CaptureOrderReq) (res *Order, err error) {
+	ctx = WithOperation(ctx, "CaptureOrder")
 	return JSON[Order](ctx, c, http.MethodPost, "/v2/checkout/orders/"+req.ID+"/capture", req)
 }
