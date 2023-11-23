@@ -26,3 +26,6 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+      env:
+        UT_PAYPAL_ID: ${{ secrets.UT_PAYPAL_ID }}
+        UT_PAYPAL_SECRET: ${{ secrets.UT_PAYPAL_SECRET }}

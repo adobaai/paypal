@@ -3,6 +3,7 @@ package paypal
 import (
 	"context"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,7 +12,11 @@ import (
 )
 
 func NewTestClient() *Client {
-	return NewClient("", "", "")
+	return NewClient(
+		"https://api-m.sandbox.paypal.com",
+		os.Getenv("UT_PAYPAL_ID"),
+		os.Getenv("UT_PAYPAL_SECRET"),
+	)
 }
 
 func TestAuth(t *testing.T) {
