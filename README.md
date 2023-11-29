@@ -12,8 +12,55 @@ A PayPal Golang SDK.
 [![Coverage Status](https://codecov.io/gh/adobaai/paypal/branch/main/graph/badge.svg)](https://codecov.io/gh/adobaai/paypal/branch/main)
 [![Contributors](https://img.shields.io/github/contributors/adobaai/paypal)](https://github.com/adobaai/paypal/graphs/contributors)
 
+## Usage
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/adobaai/paypal"
+)
+
+func main() {
+	ctx := context.Background()
+	pc := paypal.NewClient(
+		"https://api-m.sandbox.paypal.com",
+		os.Getenv("PAYPAL_ID"),
+		os.Getenv("PAYPAL_SECRET"),
+	)
+	order, err := pc.CreateOrder(ctx, &paypal.CreateOrderReq{
+		Order: &paypal.Order{
+			Intent: paypal.OICapture,
+			PurchaseUnits: []*paypal.PurchaseUnit{
+				{
+					Amount: &paypal.Amount{
+						CurrencyCode: "USD",
+						Value:        "8.88",
+					},
+					Description: "Hello order",
+				},
+			},
+		},
+	})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(order)
+}
+```
+
 ## TODO
 
 - [ ] Codecov
 - [x] Dependabot
 - [x] Unit test in GitHub Action
+- [x] Enable secret scanning
+- [x] Enable CodeQL
+
+## Other coverage tools
+
+- https://github.com/marketplace/actions/go-coverage-report
+- https://coveralls.io/
