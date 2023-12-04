@@ -52,9 +52,14 @@ func main() {
 }
 ```
 
+## Webhook
+
+See https://developer.paypal.com/api/rest/webhooks/event-names/
+or [Wayback Machine](http://web.archive.org/web/20230701223810/https://developer.paypal.com/api/rest/webhooks/event-names/).
+
 ## TODO
 
-- [ ] Codecov
+- [x] Codecov
 - [x] Dependabot
 - [x] Unit test in GitHub Action
 - [x] Enable secret scanning

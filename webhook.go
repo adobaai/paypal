@@ -6,24 +6,6 @@ import (
 	"time"
 )
 
-// EventType is the type of webhook.
-//
-// See https://developer.paypal.com/api/rest/webhooks/event-names/
-type EventType string
-
-// TODO(ion) Use code gen
-const (
-	PaymentSaleCompleted EventType = "PAYMENT.SALE.COMPLETED"
-
-	BillingSubscriptionCreated       EventType = "BILLING.SUBSCRIPTION.CREATED"
-	BillingSubscriptionActivated     EventType = "BILLING.SUBSCRIPTION.ACTIVATED"
-	BillingSubscriptionUpdated       EventType = "BILLING.SUBSCRIPTION.UPDATED"
-	BillingSubscriptionExpired       EventType = "BILLING.SUBSCRIPTION.EXPIRED"
-	BillingSubscriptionCancelled     EventType = "BILLING.SUBSCRIPTION.CANCELLED"
-	BillingSubscriptionSuspended     EventType = "BILLING.SUBSCRIPTION.SUSPENDED"
-	BillingSubscriptionPaymentFailed EventType = "BILLING.SUBSCRIPTION.PAYMENT.FAILED"
-)
-
 type Webhook struct {
 	ID           string         `json:"id,omitempty"`
 	CreateTime   time.Time      `json:"create_time,omitempty"`
