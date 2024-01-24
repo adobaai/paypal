@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"cmp"
 	"errors"
 	"fmt"
 	"os"
@@ -50,7 +49,7 @@ type Link struct {
 	URL   string
 }
 
-func sortedRangeMap[K cmp.Ordered, V any](m map[K]V, f func(k K, v V)) {
+func sortedRangeMap[K ~string, V any](m map[K]V, f func(k K, v V)) {
 	var keys []K
 	for k := range m {
 		keys = append(keys, k)
