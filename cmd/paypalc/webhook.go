@@ -2,14 +2,14 @@ package main
 
 import (
 	"bytes"
-	"cmp"
 	"errors"
 	"fmt"
 	"os"
 	"regexp"
-	"slices"
 	"strings"
 	"unicode"
+
+	"golang.org/x/exp/slices"
 )
 
 const (
@@ -50,7 +50,7 @@ type Link struct {
 	URL   string
 }
 
-func sortedRangeMap[K cmp.Ordered, V any](m map[K]V, f func(k K, v V)) {
+func sortedRangeMap[K ~string, V any](m map[K]V, f func(k K, v V)) {
 	var keys []K
 	for k := range m {
 		keys = append(keys, k)
@@ -176,9 +176,9 @@ func findBytes(bs []byte, pattern []byte) (index int) {
 }
 
 var (
-	reTitle    = regexp.MustCompile(`(?s)<h2.*?>.+<\/div>(.+)<\/h2>`)
+	reTitle    = regexp.MustCompile(`(?s)<h2.*?>.+<\/div>\s*(.+?)\s*<\/h2>`)
 	reDesc     = regexp.MustCompile(`(?s)<p>\s*(.+)\s*<\/p>`)
-	reVersion  = regexp.MustCompile(`(?s)<h3.+div>(.+)<\/h3>`)
+	reVersion  = regexp.MustCompile(`(?s)<h3.+div>\s*(.+?)\s*<\/h3>`)
 	reWebhooks = regexp.MustCompile(`(?s)<tr>.+?<\/tr>`)
 	reWebhook  = regexp.MustCompile(`(?s)<tr>\s*<td.*>\s*<code.*>(.+)<\/code\s*>\s*<\/td>\s*<td.*?>\s*(.+)\s*<\/td>\s*<td.*?>\s*(.*?)\s*<\/td>`)
 	reA        = regexp.MustCompile(`(?s)<a.*href="(.+)".*>\s*(.*?)\s*<\/a.*>`)
