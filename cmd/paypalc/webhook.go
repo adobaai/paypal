@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"slices"
 	"strings"
 	"unicode"
+
+	"golang.org/x/exp/slices"
 )
 
 const (
