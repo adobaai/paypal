@@ -227,7 +227,7 @@ func NewJSONRequest(ctx context.Context, method, url string, data any,
 	return
 }
 
-// RespJSON unmarshals the response body into a new R and closes the body afterward.
+// RespJSON unmarshals the response body into a new 'R' and then closes the body.
 func RespJSON[R any](r *http.Response) (res *R, err error) {
 	defer r.Body.Close()
 	bs, err := io.ReadAll(r.Body)
